@@ -45,12 +45,13 @@ class NeuralNetwork
           
       else
         # If we're on the last weight, we want to use softmax as our activation function to normalize our output (Maybe. I'm making it up as I go mostly.)
-      curV = curZ.map() { |z| activationFunc("softmax", [z, curZ]) }
+        curV = curZ.map() { |z| activationFunc("softmax", [z, curZ]) }
         
       end
       
     end
     
+    return curV    
     
   end
   
@@ -79,7 +80,15 @@ class NeuralNetwork
   # Param:       x - the value to compute
   # Param:       vector - the vector containing x and the other values for use in the summation portion
   def softmax(x, vector)
-  
+    # Find e^(v) for all v in Vector
+    expVect = vector.map() { |v| Math.exp(v) } 
+      
+    # Add up all the results, they are the denominator of the Softmax function
+    denominator = 0
+    expVect.map() { |v| denominator = denominator + v } 
+      
+    # Calculate the final result
+    return (Math.exp(x) / denominator)
   end
   
   # Description: Set the weight at position i. FOR TESTING PURPOSES ONLY!
@@ -90,7 +99,7 @@ class NeuralNetwork
   end
   
   # Description: Prints out each matrix of weights
-  def printWeights()
+  def printWeights() 
     
     for i in 0...@weights.length
       puts "W" + i.to_s() +" :" + @weights[i].to_s()
