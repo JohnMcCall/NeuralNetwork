@@ -27,32 +27,61 @@ class NeuralNetwork
   
   # Description: Takes an input vector and computes the output of the neural network
   # Param:       input - An array containing the input paramaters of the neural network
+  # Param:       expected - An array containing the expected output of the neural network (for training)
   # Returns:     An array containing the output vector of the network
-  def eval(input)
+  def eval(input, expected)
     
     numWeights = @weights.length
+    trainingData = Array.new()
     
     # Start by setting input as the first value vector, V0
     curV = input
     
     for i in 0...numWeights
+      # Save off input to this layer for training
+      trainingData[i]=curV 
+      
       # Calculate intermediate vector, Zi, by multiplying Vi and matrix Wi.
       curZ = curV*@weights[i]
       
-      if i < numWeights - 1 then 
+      #Only use sigmoid for now
+      #if i < numWeights - 1 then 
         # Calculate the new value vector Vi, by applying the activation function to the vector Zi.
         curV = curZ.map() { |z| activationFunc("sigmoid", [z]) } # applies the sigmoid function to all values, z, in Zi
           
-      else
+      #else
         # If we're on the last weight, we want to use softmax as our activation function to normalize our output (Maybe. I'm making it up as I go mostly.)
-        curV = curZ.map() { |z| activationFunc("softmax", [z, curZ]) }
+        #curV = curZ.map() { |z| activationFunc("softmax", [z, curZ]) }
         
-      end
+     #end
       
+    end
+    
+    # Save off output of this layer for training
+    trainingData[numWeights]=curV
+    
+    if !expected.nil?
+      backpropagate(trainingData, expected)
     end
     
     return curV    
     
+  end
+  
+  # Description: Performs the backpropagation algorithm to train the neural network
+  # Param:       trainingData - Array of values saved from forward propogation needed for training (inputs and outputs of each layer)
+  def backpropagate(trainingData, expected)
+    puts(trainingData.to_s())
+    numWeights = @weights.length
+    errors = Array.new()
+    
+    # Last weight is a special case, handle here
+
+    
+    # Loop backwards through the weight Arrays
+    for i in (numWeights).downto(0)
+     
+    end
   end
   
   # Description: Evaluates the desired activation function on the given input
@@ -102,7 +131,7 @@ class NeuralNetwork
   def printWeights() 
     
     for i in 0...@weights.length
-      puts "W" + i.to_s() +" :" + @weights[i].to_s()
+      puts "W" + i.to_s() +": " + @weights[i].to_s()
     end
     
   end
